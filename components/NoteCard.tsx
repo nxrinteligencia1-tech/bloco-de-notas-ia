@@ -52,11 +52,11 @@ const EditModal: React.FC<{
 const NoteCard: React.FC<NoteCardProps> = ({ note, onDelete, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
 
-    const formattedDate = note.createdAt?.toDate().toLocaleDateString('pt-BR', {
+    const formattedDate = new Date(note.createdAt).toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: 'long',
         year: 'numeric'
-    }) || '';
+    });
 
 
     const handleExport = () => {
