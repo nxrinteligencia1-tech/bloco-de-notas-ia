@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Note } from './types';
-import AddNoteForm from './components/AddNoteForm';
+import AddNoteModal from './components/AddNoteForm'; // Renomeado para clareza
 import NoteCard from './components/NoteCard';
 import { Header } from './components/Header';
 import { NoNotes } from './components/NoNotes';
 
 const App: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Carregar notas do localStorage na montagem inicial
   useEffect(() => {
@@ -42,6 +43,7 @@ const App: React.FC = () => {
     };
     // Adiciona a nova nota no início da lista
     setNotes([newNote, ...notes]);
+    setIsAddModalOpen(false); // Fecha o modal após adicionar
   };
 
   const handleDeleteNote = (id: string) => {
@@ -58,12 +60,11 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <Header />
-          <main>
-            <AddNoteForm onAddNote={handleAddNote} />
+          <main className="mt-8">
             {notes.length === 0 ? (
               <NoNotes />
             ) : (
-              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
                 {notes.map(note => (
                   <NoteCard key={note.id} note={note} onDelete={handleDeleteNote} onEdit={handleEditNote}/>
                 ))}
@@ -71,6 +72,26 @@ const App: React.FC = () => {
             )}
           </main>
       </div>
+
+      {/* Floating Action Button (FAB) */}
+      <button
+        onClick={() => setIsAddModalOpen(true)}
+        className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transform transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
+        aria-label="Adicionar nova nota"
+        title="Adicionar nova nota"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+
+      {/* Add Note Modal */}
+      {isAddModalOpen && (
+        <AddNoteModal 
+          onAddNote={handleAddNote} 
+          onClose={() => setIsAddModalOpen(false)} 
+        />
+      )}
     </div>
   );
 };

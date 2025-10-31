@@ -76,7 +76,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onDelete, onEdit }) => {
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 flex flex-col transition-shadow hover:shadow-xl h-full">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 flex flex-col transition-shadow hover:shadow-xl h-full break-inside-avoid-column">
         <div className="flex-grow">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 break-words">{note.title}</h3>
             <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{note.content}</p>

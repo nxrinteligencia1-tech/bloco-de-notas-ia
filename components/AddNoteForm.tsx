@@ -1,58 +1,74 @@
 import React, { useState } from 'react';
 
-interface AddNoteFormProps {
+interface AddNoteModalProps {
   onAddNote: (title: string, content: string) => void;
+  onClose: () => void;
 }
 
-const AddNoteForm: React.FC<AddNoteFormProps> = ({ onAddNote }) => {
+const AddNoteModal: React.FC<AddNoteModalProps> = ({ onAddNote, onClose }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim() || content.trim()) {
       onAddNote(title.trim() || "Nota sem título", content.trim());
-      setTitle('');
-      setContent('');
-      setIsExpanded(false);
+      // O modal será fechado pelo componente pai
     }
   };
 
-  const handleFocus = () => {
-    setIsExpanded(true);
+  // Permite fechar o modal clicando fora da caixa de diálogo
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   return (
-    <div className="max-w-xl mx-auto">
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-all duration-300">
-            {isExpanded && (
-                <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Título"
-                    className="w-full p-2 mb-3 bg-transparent focus:outline-none text-lg font-medium text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
-                />
-            )}
-            <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                onFocus={handleFocus}
-                placeholder="Criar uma nota..."
-                className="w-full p-2 bg-transparent focus:outline-none text-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400 resize-none"
-                rows={isExpanded ? 3 : 1}
-            />
-            {isExpanded && (
-                <div className="flex justify-end mt-2">
-                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105">
-                        Salvar
-                    </button>
-                </div>
-            )}
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg shadow-xl transform transition-all"
+        onClick={(e) => e.stopPropagation()} // Impede que o clique dentro do modal o feche
+      >
+        <form onSubmit={handleSubmit}>
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Nova Nota</h2>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Título"
+            className="w-full p-3 mb-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 dark:text-gray-200"
+            autoFocus
+          />
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Criar uma nota..."
+            className="w-full p-3 mb-6 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-800 dark:text-gray-200"
+            rows={6}
+          />
+          <div className="flex justify-end space-x-4">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="px-5 py-2.5 rounded-md text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors font-medium"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              className="px-5 py-2.5 rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors font-medium"
+            >
+              Salvar
+            </button>
+          </div>
         </form>
+      </div>
     </div>
   );
 };
 
-export default AddNoteForm;
+export default AddNoteModal;
