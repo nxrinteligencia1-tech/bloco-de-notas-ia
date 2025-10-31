@@ -1,0 +1,21 @@
+{
+  "name": "Bloco.AI",
+  "short_name": "Bloco.AI",
+  "description": "Um aplicativo de bloco de notas simples para criar e gerenciar suas anotações. Todas as notas são salvas localmente no seu navegador.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

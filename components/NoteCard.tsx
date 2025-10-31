@@ -1,16 +1,15 @@
-
 import React, { useState } from 'react';
 import { Note } from '../types';
 
 interface NoteCardProps {
   note: Note;
-  onDelete: (id: number) => void;
-  onEdit: (id: number, newTitle: string, newContent: string) => void;
+  onDelete: (id: string) => void;
+  onEdit: (id: string, newTitle: string, newContent: string) => void;
 }
 
 const EditModal: React.FC<{
   note: Note;
-  onSave: (id: number, newTitle: string, newContent: string) => void;
+  onSave: (id: string, newTitle: string, newContent: string) => void;
   onClose: () => void;
 }> = ({ note, onSave, onClose }) => {
   const [title, setTitle] = useState(note.title);
@@ -53,11 +52,27 @@ const EditModal: React.FC<{
 const NoteCard: React.FC<NoteCardProps> = ({ note, onDelete, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
 
-    const formattedDate = new Date(note.createdAt).toLocaleDateString('pt-BR', {
+    const formattedDate = note.createdAt?.toDate().toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: 'long',
         year: 'numeric'
-    });
+    }) || '';
+
+
+    const handleExport = () => {
+        const fileContent = `${note.title}\n\n${note.content}`;
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const fileName = `${note.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'nota'}.txt`;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
 
   return (
     <>
@@ -69,12 +84,17 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onDelete, onEdit }) => {
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <span className="text-xs text-gray-500 dark:text-gray-400">{formattedDate}</span>
             <div className="flex space-x-2">
-                 <button onClick={() => setIsEditing(true)} className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                 <button onClick={() => setIsEditing(true)} aria-label="Editar nota" title="Editar nota" className="text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" />
                     </svg>
                 </button>
-                <button onClick={() => onDelete(note.id)} className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <button onClick={handleExport} aria-label="Exportar nota para TXT" title="Exportar para TXT" className="text-gray-500 hover:text-green-500 dark:text-gray-400 dark:hover:text-green-400 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </button>
+                <button onClick={() => onDelete(note.id)} aria-label="Excluir nota" title="Excluir nota" className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>

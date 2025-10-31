@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 interface AddNoteFormProps {
@@ -47,7 +46,7 @@ const AddNoteForm: React.FC<AddNoteFormProps> = ({ onAddNote }) => {
             {isExpanded && (
                 <div className="flex justify-end mt-2">
                     <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition duration-300 ease-in-out transform hover:scale-105">
-                        Adicionar
+                        Salvar
                     </button>
                 </div>
             )}
